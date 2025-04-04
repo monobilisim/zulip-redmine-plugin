@@ -1,4 +1,4 @@
-require "redmine_zulip"
+require File.expand_path('lib/redmine_zulip', __dir__)
 
 Redmine::Plugin.register :redmine_zulip do
   name 'Zulip'
@@ -7,6 +7,8 @@ Redmine::Plugin.register :redmine_zulip do
   version RedmineZulip::VERSION
   url 'https://github.com/zulip/zulip-redmine-plugin'
   author_url 'https://www.zulip.org/'
+
+  requires_redmine version_or_higher: '4.0.0'
 
   settings partial: "settings/redmine_zulip", default: {
     "zulip_url" => "",
@@ -17,3 +19,4 @@ Redmine::Plugin.register :redmine_zulip do
     "zulip_version_updates_subject_expression" => "Version ${version_name}"
   }
 end
+

@@ -1,0 +1,65 @@
+tr:
+  label_redmine_zulip: Zulip
+  zulip_settings_header: Zulip Eklenti Yapılandırması
+  zulip_settings_label_url: Zulip URL
+  zulip_settings_label_email: Zulip Bot E-postası
+  zulip_settings_label_api_key: Zulip Bot API anahtarı
+  zulip_settings_label_stream_expression: Kanal adı
+  zulip_settings_label_issue_updates_subject_expression: >
+    İş güncellemeleri konusu
+  zulip_settings_label_version_updates_subject_expression: >
+    Sürüm güncellemeleri konusu
+  field_zulip_url: Zulip URL
+  field_zulip_email: Zulip e-posta
+  field_zulip_api_key: Zulip Bot API anahtarı
+  field_zulip_stream_expression: Kanal adı
+  field_zulip_issue_updates_subject_expression: >
+    İş güncellemeleri konusu
+  field_zulip_version_updates_subject_expression: >
+    Sürüm güncellemeleri konusu
+  zulip_notify_assignment: >
+    %{user} [[%{project}#%{id}] %{subject}](%{url}) işini **size** **atadı**:
+
+
+    ~~~quote
+
+    %{description}
+
+    ~~~
+
+
+    * **%{status_label}**: %{status}
+
+
+  zulip_notify_unassignment: >
+    %{user} [[%{project}#%{id}] %{subject}](%{url}) işini **sizden** **kaldırdı**.
+
+  zulip_notify_updated: >
+    %{user} [[%{project}#%{id}] %{subject}](%{url}) işini **güncelledi**.
+
+  zulip_notify_destroyed: >
+    %{user} **%{id}: %{subject}** işini **sildi**.
+
+  zulip_init_issue_subject: >
+    %{user} [[%{project}#%{id}] %{subject}](%{url}) işini **oluşturdu**:
+
+
+    ~~~quote
+
+    %{description}
+
+    ~~~
+
+    * **%{assigned_to_label}**: %{assigned_to}
+
+    * **%{status_label}**: %{status}
+
+  zulip_update_version_subject_added: >
+    %{user} [[%{project}#%{id}] %{subject}](%{url}) işini **%{fixed_version}** sürümüne **ekledi**.
+
+  zulip_update_version_subject_removed: >
+    %{user} [[%{project}#%{id}] %{subject}](%{url}) işini **%{fixed_version}** sürümünden **çıkardı**.
+
+  zulip_update_version_subject_status: >
+    %{user} [[%{project}#%{id}] %{subject}](%{url}) işinin durumunu
+    *~~%{previous_status}~~* durumundan **%{current_status}** durumuna **değiştirdi**. 

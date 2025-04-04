@@ -1,4 +1,4 @@
-class UpgradeZulipSettingsToProject < ActiveRecord::Migration
+class UpgradeZulipSettingsToProject < ActiveRecord::Migration[5.2]
   def change
     remove_column :projects, :zulip_email, :string
     remove_column :projects, :zulip_api_key, :string
