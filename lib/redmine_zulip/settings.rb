@@ -55,6 +55,7 @@ module RedmineZulip
       expression.gsub("${issue_id}", "#{@issue.id}")
                 .gsub("${issue_subject}", @issue.subject_without_punctuation)
                 .gsub("${project_name}", @issue.project.name)
+                .gsub("${project_identifier}", @issue.project.identifier)
                 .gsub("${version_name}",
                         @issue.fixed_version.nil? ? "" : @issue.fixed_version.name)
     end
