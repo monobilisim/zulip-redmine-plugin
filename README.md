@@ -8,7 +8,7 @@ Get Zulip notifications for your Redmine issues!
 | ---------------------------- | --------------- |
 | 1.x                          | 3.x             |
 | 2.x                          | 3.x             |
-| 3.x                          | 4.x             |
+| 3.x                          | 4.x,5.x,6.x     |
 
 ## Installing
 
@@ -21,7 +21,7 @@ cd /path/to/redmine
 1. Clone the **Redmine Zulip Plugin** into `plugins` directory
 
 ```sh
-git clone https://github.com/zulip/zulip-redmine-plugin.git plugins/redmine_zulip
+git clone https://github.com/monobilisim/zulip-redmine-plugin.git plugins/redmine_zulip
 ```
 
 2. **Restart** your Redmine instance
