@@ -18,7 +18,7 @@ tr:
   field_zulip_version_updates_subject_expression: >
     Sürüm güncellemeleri konusu
   zulip_notify_assignment: >
-    %{user} [[%{project}#%{id}] %{subject}](%{url}) işini **size** **atadı**:
+    %{user} [[%{project} #%{id}] %{subject}](%{url}) işini **size** **atadı**:
 
 
     ~~~quote
@@ -30,18 +30,17 @@ tr:
 
     * **%{status_label}**: %{status}
 
-
   zulip_notify_unassignment: >
-    %{user} [[%{project}#%{id}] %{subject}](%{url}) işini **sizden** **kaldırdı**.
+    %{user} [[%{project} #%{id}] %{subject}](%{url}) işini **sizden** **kaldırdı**.
 
   zulip_notify_updated: >
-    %{user} [[%{project}#%{id}] %{subject}](%{url}) işini **güncelledi**.
+    %{user} [[%{project} #%{id}] %{subject}](%{url}) işini **güncelledi**.
 
   zulip_notify_destroyed: >
     %{user} **%{id}: %{subject}** işini **sildi**.
 
   zulip_init_issue_subject: >
-    %{user} [[%{project}#%{id}] %{subject}](%{url}) işini **oluşturdu**:
+    %{user} [[%{project} #%{id}] %{subject}](%{url}) işini **oluşturdu**:
 
 
     ~~~quote
@@ -55,11 +54,10 @@ tr:
     * **%{status_label}**: %{status}
 
   zulip_update_version_subject_added: >
-    %{user} [[%{project}#%{id}] %{subject}](%{url}) işini **%{fixed_version}** sürümüne **ekledi**.
+    %{user} [[%{project} #%{id}] %{subject}](%{url}) işini **%{fixed_version}** sürümüne **ekledi**.
 
   zulip_update_version_subject_removed: >
-    %{user} [[%{project}#%{id}] %{subject}](%{url}) işini **%{fixed_version}** sürümünden **çıkardı**.
+    %{user} [[%{project} #%{id}] %{subject}](%{url}) işini **%{fixed_version}** sürümünden **çıkardı**.
 
   zulip_update_version_subject_status: >
-    %{user} [[%{project}#%{id}] %{subject}](%{url}) işinin durumunu
-    *~~%{previous_status}~~* durumundan **%{current_status}** durumuna **değiştirdi**. 
+    %{user} [[%{project} #%{id}] %{subject}](%{url}) işinin durumunu *~~%{previous_status}~~* durumundan **%{current_status}** durumuna **değiştirdi**. 
