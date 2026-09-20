@@ -131,7 +131,10 @@ module RedmineZulip
     end
 
     # Renders every field that changed in this save, as Zulip markdown bullets.
-    def zulip_change_details(locale)
+    # Returns "" for a freshly created issue, whose every column shows as changed.
+    def zulip_change_details(locale, omit = [])
+      return "" if previous_changes.include?("id")
+
       message = ""
 
       if previous_changes.include?("subject")
@@ -154,6 +157,7 @@ module RedmineZulip
       end
 
       CHANGE_FIELDS.each do |column, (label, resolver)|
+        next if omit.include?(column)
         next unless previous_changes.include?(column)
         previous_value, value = previous_changes[column]
         message += "\n* **#{Issue.human_attribute_name(label, locale: locale)}**: "
@@ -178,6 +182,12 @@ module RedmineZulip
         description: description_truncated,
         status_label: Issue.human_attribute_name(:status, locale: locale)
       })
+      # The assignment itself is already in the template above.
+      message += zulip_change_details(locale, %w[assigned_to_id])
+      if priority.present?
+        priority_label = Issue.human_attribute_name(:priority, locale: locale)
+        message += "* **#{priority_label}**: #{priority.name}\n"
+      end
       if fixed_version.present?
         version_label = Issue.human_attribute_name(:fixed_version, locale: locale)
         message += "* **#{version_label}**: #{fixed_version.name}\n"
