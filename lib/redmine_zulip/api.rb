@@ -1,5 +1,7 @@
 module RedmineZulip
   class Api
+    TIMEOUT = 10
+
     attr_reader :url, :email, :key
 
     def initialize(url:, email:, key:)
@@ -37,12 +39,17 @@ module RedmineZulip
         req.basic_auth(api.email, api.key)
         req["User-Agent"] = "ZulipRedminePlugin/#{RedmineZulip::VERSION}"
         req.set_form_data(form_data)
-        res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
-          http.request(req)
+        http = Net::HTTP.new(uri.hostname, uri.port)
+        http.use_ssl = uri.scheme == "https"
+        http.open_timeout = TIMEOUT
+        http.read_timeout = TIMEOUT
+        res = http.start { |connection| connection.request(req) }
+        unless res.code == "200"
+          Rails.logger.warn("Zulip API #{res.code}: #{res.body}")
         end
         res.code == "200"
-      rescue SocketError => e
-        Rails.logger.warn("Zulip API error: #{e.message}")
+      rescue StandardError => e
+        Rails.logger.warn("Zulip API error: #{e.class}: #{e.message}")
         false
       end
     end

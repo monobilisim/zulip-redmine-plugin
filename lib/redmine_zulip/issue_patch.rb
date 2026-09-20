@@ -4,6 +4,27 @@ module RedmineZulip
 
     TWEET_SIZE = 140
 
+    # Issue columns rendered in update notifications, in display order.
+    # column => [human_attribute_name key, resolver(value)]
+    CHANGE_FIELDS = {
+      "assigned_to_id"   => [:assigned_to,     ->(id) { User.find_by(id: id)&.name }],
+      "status_id"        => [:status,          ->(id) { IssueStatus.find_by(id: id)&.name }],
+      "priority_id"      => [:priority,        ->(id) { IssuePriority.find_by(id: id)&.name }],
+      "tracker_id"       => [:tracker,         ->(id) { Tracker.find_by(id: id)&.name }],
+      "category_id"      => [:category,        ->(id) { IssueCategory.find_by(id: id)&.name }],
+      "fixed_version_id" => [:fixed_version,   ->(id) { Version.find_by(id: id)&.name }],
+      "parent_id"        => [:parent_issue,    ->(id) { Issue.find_by(id: id)&.subject }],
+      "start_date"       => [:start_date,      ->(date) { zulip_format_date(date) }],
+      "due_date"         => [:due_date,        ->(date) { zulip_format_date(date) }],
+      "estimated_hours"  => [:estimated_hours, ->(hours) { hours.to_s }],
+      "done_ratio"       => [:done_ratio,      ->(ratio) { "#{ratio}%" }]
+    }.freeze
+
+    def self.zulip_format_date(date)
+      return nil if date.blank?
+      I18n.l(date.to_date, format: Setting.date_format.presence)
+    end
+
     included do
       after_commit :notify_assignment, if: proc { |issue|
         issue.zulip_settings.enabled? &&
@@ -92,7 +113,7 @@ module RedmineZulip
     end
 
     def subject_without_punctuation
-      subject.end_with?(".") ? subject[0..-1] : subject
+      subject.to_s.chomp(".")
     end
 
     def zulip_settings
@@ -107,6 +128,40 @@ module RedmineZulip
         email: zulip_settings.zulip_email,
         key: zulip_settings.zulip_api_key
       )
+    end
+
+    # Renders every field that changed in this save, as Zulip markdown bullets.
+    def zulip_change_details(locale)
+      message = ""
+
+      if previous_changes.include?("subject")
+        message += "\n* **#{Issue.human_attribute_name(:subject, locale: locale)}**: "
+        message += "*~~#{previous_changes['subject'].first}~~* "
+        message += subject_without_punctuation
+      end
+
+      if previous_changes.include?("description")
+        message += "~~~ quote\n"
+        message += description_truncated
+        message += "\n~~~\n"
+      end
+
+      if notes.present?
+        message += "\n* **#{Issue.human_attribute_name(:notes, locale: locale)}**\n"
+        message += "~~~ quote\n"
+        message += notes
+        message += "\n~~~\n"
+      end
+
+      CHANGE_FIELDS.each do |column, (label, resolver)|
+        next unless previous_changes.include?(column)
+        previous_value, value = previous_changes[column]
+        message += "\n* **#{Issue.human_attribute_name(label, locale: locale)}**: "
+        message += "*~~#{resolver.call(previous_value)}~~* " if previous_value.present?
+        message += resolver.call(value).to_s if value.present?
+      end
+
+      message
     end
 
     def notify_assignment
@@ -170,49 +225,7 @@ module RedmineZulip
         subject: subject_without_punctuation,
         locale: locale
       })
-      if previous_changes.include?("description")
-        message += "~~~ quote\n"
-        message += description_truncated
-        message += "\n~~~\n"
-      end
-      if notes.present?
-        message += "\n**#{Issue.human_attribute_name(:notes, locale: locale)}**\n"
-        message += "~~~ quote\n"
-        message += notes
-        message += "\n~~~\n"
-      end
-      if previous_changes.include?("status_id")
-        message += "\n* **#{Issue.human_attribute_name(:status, locale: locale)}**: "
-        previous_status_id = previous_changes["status_id"].first
-        if previous_status_id.present?
-          previous_status = IssueStatus.find(previous_status_id)
-          message += "*~~#{previous_status}~~* " if previous_status.present?
-        end
-        if status.present?
-          message += status.name
-        end
-      end
-      if previous_changes.include?("fixed_version_id")
-        message += "\n* **#{Issue.human_attribute_name(:fixed_version, locale: locale)}**: "
-        previous_fixed_version_id = previous_changes["fixed_version_id"].first
-        if previous_fixed_version_id.present?
-          previous_fixed_version = Version.find(previous_fixed_version_id)
-          message += "*~~#{previous_fixed_version}~~* " if previous_fixed_version.present?
-        end
-        if fixed_version.present?
-          message += fixed_version.name
-        end
-      end
-      if previous_changes.include?("estimated_hours")
-        message += "\n* **#{Issue.human_attribute_name(:estimated_hours, locale: locale)}**: "
-        previous_estimated_hours = previous_changes["estimated_hours"].first
-        if previous_estimated_hours.present?
-          message += "*~~#{previous_estimated_hours}~~* "
-        end
-        if estimated_hours.present?
-          message += "#{estimated_hours}"
-        end
-      end
+      message += zulip_change_details(locale)
       zulip_api.messages.send(
         type: "private",
         content: message,
@@ -252,6 +265,10 @@ module RedmineZulip
         status_label: Issue.human_attribute_name(:status, locale: locale),
         status: status.nil? ? nil : status.name
       })
+      if priority.present?
+        priority_label = Issue.human_attribute_name(:priority, locale: locale)
+        message += "* **#{priority_label}**: #{priority.name}\n"
+      end
       if fixed_version.present?
         version_label = Issue.human_attribute_name(:fixed_version, locale: locale)
         message += "* **#{version_label}**: #{fixed_version.name}\n"
@@ -278,60 +295,7 @@ module RedmineZulip
         project: project.name,
         subject: subject_without_punctuation,
       })
-      if previous_changes.include?("description")
-        message += "~~~ quote\n"
-        message += description_truncated
-        message += "\n~~~\n"
-      end
-      if notes.present?
-        message += "\n* **#{Issue.human_attribute_name(:notes, locale: locale)}**\n"
-        message += "~~~ quote\n"
-        message += notes
-        message += "\n~~~\n"
-      end
-      if previous_changes.include?("assigned_to_id")
-        message += "\n* **#{Issue.human_attribute_name(:assigned_to, locale: locale)}**: "
-        previous_assigned_to_id = previous_changes["assigned_to_id"].first
-        if previous_assigned_to_id.present?
-          previous_assigned_to = User.find(previous_assigned_to_id)
-          message += "*~~#{previous_assigned_to.name}~~* " if previous_assigned_to.present?
-        end
-        if assigned_to.present?
-          message += assigned_to.name
-        end
-      end
-      if previous_changes.include?("status_id")
-        message += "\n* **#{Issue.human_attribute_name(:status, locale: locale)}**: "
-        previous_status_id = previous_changes["status_id"].first
-        if previous_status_id.present?
-          previous_status = IssueStatus.find(previous_status_id)
-          message += "*~~#{previous_status}~~* " if previous_status.present?
-        end
-        if status.present?
-          message += status.name
-        end
-      end
-      if previous_changes.include?("fixed_version_id")
-        message += "\n* **#{Issue.human_attribute_name(:fixed_version, locale: locale)}**: "
-        previous_fixed_version_id = previous_changes["fixed_version_id"].first
-        if previous_fixed_version_id.present?
-          previous_fixed_version = Version.find(previous_fixed_version_id)
-          message += "*~~#{previous_fixed_version}~~* " if previous_fixed_version.present?
-        end
-        if fixed_version.present?
-          message += fixed_version.name
-        end
-      end
-      if previous_changes.include?("estimated_hours")
-        message += "\n* **#{Issue.human_attribute_name(:estimated_hours, locale: locale)}**: "
-        previous_estimated_hours = previous_changes["estimated_hours"].first
-        if previous_estimated_hours.present?
-          message += "*~~#{previous_estimated_hours}~~* "
-        end
-        if estimated_hours.present?
-          message += "#{estimated_hours}"
-        end
-      end
+      message += zulip_change_details(locale)
       zulip_api.messages.send(
         type: "stream",
         content: message,
@@ -375,8 +339,8 @@ module RedmineZulip
     end
 
     def update_version_subject_removed
-      previous_fixed_version = Version.find(
-        previous_changes["fixed_version_id"].first
+      previous_fixed_version = Version.find_by(
+        id: previous_changes["fixed_version_id"].first
       )
       message = I18n.t("zulip_update_version_subject_removed", **{
         locale: Setting.default_language,
@@ -404,7 +368,7 @@ module RedmineZulip
         url: url,
         project: project.name,
         subject: subject_without_punctuation,
-        previous_status: IssueStatus.find(previous_status_id),
+        previous_status: IssueStatus.find_by(id: previous_status_id),
         current_status: status
       })
       zulip_api.messages.send(
@@ -436,7 +400,7 @@ module RedmineZulip
     end
 
     def description_truncated
-      truncated = description
+      truncated = description.to_s
       if truncated.include?("\n")
         truncated = "#{truncated.split("\n")[0]}..."
       end
