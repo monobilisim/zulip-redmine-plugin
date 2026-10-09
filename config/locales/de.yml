@@ -63,3 +63,19 @@ de:
   zulip_update_version_subject_status: >
     %{user} hat den Status von Ticket [[%{project}#%{id}] %{subject}](%{url}) von
     *~~%{previous_status}~~* auf **%{current_status} geändert**.
+
+  zulip_notify_news_added: "**[%{title}](%{url})**\n%{user} hat eine **Neuigkeit hinzugefügt**."
+
+  zulip_notify_news_comment_added: "**[%{title}](%{url})**\n%{user} hat die Neuigkeit **kommentiert**."
+
+  zulip_notify_document_added: "**[%{title}](%{url})**\n%{user} hat ein **Dokument hinzugefügt** (%{category})."
+
+  zulip_notify_file_added: "**[%{container}](%{url})**\n%{user} hat **Dateien hinzugefügt**."
+
+  zulip_notify_message_posted: "**[%{subject}](%{url})**\n%{user} hat eine **Nachricht in %{board} geschrieben**."
+
+  zulip_notify_wiki_added: "**[%{title}](%{url})**\n%{user} hat eine **Wiki-Seite erstellt**."
+
+  zulip_notify_wiki_updated: "**[%{title}](%{url})**\n%{user} hat eine **Wiki-Seite aktualisiert**."
+
+  zulip_notify_wiki_diff: "**Unterschied**: [%{url}](%{url})"

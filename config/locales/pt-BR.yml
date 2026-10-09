@@ -61,3 +61,19 @@ pt-BR:
   zulip_update_version_subject_status: >
     %{user} **modificou o status** da tarefa [[%{project}#%{id}] %{subject}](%{url}) de
     *~~%{previous_status}~~* para **%{current_status}**.
+
+  zulip_notify_news_added: "**[%{title}](%{url})**\n%{user} **adicionou uma notícia**."
+
+  zulip_notify_news_comment_added: "**[%{title}](%{url})**\n%{user} **comentou a notícia**."
+
+  zulip_notify_document_added: "**[%{title}](%{url})**\n%{user} **adicionou um documento** (%{category})."
+
+  zulip_notify_file_added: "**[%{container}](%{url})**\n%{user} **adicionou arquivos**."
+
+  zulip_notify_message_posted: "**[%{subject}](%{url})**\n%{user} **publicou uma mensagem em %{board}**."
+
+  zulip_notify_wiki_added: "**[%{title}](%{url})**\n%{user} **criou uma página wiki**."
+
+  zulip_notify_wiki_updated: "**[%{title}](%{url})**\n%{user} **atualizou uma página wiki**."
+
+  zulip_notify_wiki_diff: "**Diferença**: [%{url}](%{url})"

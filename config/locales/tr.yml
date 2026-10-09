@@ -60,4 +60,20 @@ tr:
     %{user} [[%{project} #%{id}] %{subject}](%{url}) işini **%{fixed_version}** sürümünden **çıkardı**.
 
   zulip_update_version_subject_status: >
-    %{user} [[%{project} #%{id}] %{subject}](%{url}) işinin durumunu *~~%{previous_status}~~* durumundan **%{current_status}** durumuna **değiştirdi**. 
+    %{user} [[%{project} #%{id}] %{subject}](%{url}) işinin durumunu *~~%{previous_status}~~* durumundan **%{current_status}** durumuna **değiştirdi**.
+
+  zulip_notify_news_added: "**[%{title}](%{url})**\n%{user} **haber ekledi**."
+
+  zulip_notify_news_comment_added: "**[%{title}](%{url})**\n%{user} **haber yorumu yazdı**."
+
+  zulip_notify_document_added: "**[%{title}](%{url})**\n%{user} **belge ekledi** (%{category})."
+
+  zulip_notify_file_added: "**[%{container}](%{url})**\n%{user} **dosya ekledi**."
+
+  zulip_notify_message_posted: "**[%{subject}](%{url})**\n%{user} **%{board} panosuna mesaj yazdı**."
+
+  zulip_notify_wiki_added: "**[%{title}](%{url})**\n%{user} **wiki sayfası oluşturdu**."
+
+  zulip_notify_wiki_updated: "**[%{title}](%{url})**\n%{user} **wiki sayfası güncelledi**."
+
+  zulip_notify_wiki_diff: "**Fark**: [%{url}](%{url})" 

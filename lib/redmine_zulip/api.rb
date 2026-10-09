@@ -21,6 +21,9 @@ module RedmineZulip
     private
 
     class Messages
+      # Zulip rejects message content longer than 10000 characters.
+      MAX_CONTENT_LENGTH = 9_500
+
       attr_reader :api
 
       def initialize(api)
@@ -28,6 +31,10 @@ module RedmineZulip
       end
 
       def send(type:, to:, content:, subject: nil)
+        content = content.to_s
+        if content.length > MAX_CONTENT_LENGTH
+          content = "#{content[0, MAX_CONTENT_LENGTH]}\n…"
+        end
         form_data = {
           "type" => type,
           "to" => to,

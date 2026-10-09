@@ -63,3 +63,19 @@ en:
   zulip_update_version_subject_status: >
     %{user} **changed status** of issue [[%{project}#%{id}] %{subject}](%{url}) from
     *~~%{previous_status}~~* to **%{current_status}**.
+
+  zulip_notify_news_added: "**[%{title}](%{url})**\n%{user} **added news**."
+
+  zulip_notify_news_comment_added: "**[%{title}](%{url})**\n%{user} **commented on news**."
+
+  zulip_notify_document_added: "**[%{title}](%{url})**\n%{user} **added document** (%{category})."
+
+  zulip_notify_file_added: "**[%{container}](%{url})**\n%{user} **added files**."
+
+  zulip_notify_message_posted: "**[%{subject}](%{url})**\n%{user} **posted a message to %{board}**."
+
+  zulip_notify_wiki_added: "**[%{title}](%{url})**\n%{user} **created wiki page**."
+
+  zulip_notify_wiki_updated: "**[%{title}](%{url})**\n%{user} **updated wiki page**."
+
+  zulip_notify_wiki_diff: "**Diff**: [%{url}](%{url})"

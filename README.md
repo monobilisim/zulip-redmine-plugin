@@ -59,3 +59,21 @@ variables:_
 
 To override global settings project wise, go to your project's **Settings**
 page, and select the **Zulip** tab.
+
+## Notification types
+
+The plugin mirrors Redmine's activity notification e-mails into Zulip, one
+message per event, using the configured stream and subject:
+
+| Event | Zulip |
+| ----- | ----- |
+| Issue created / updated (notes, changed fields) | stream message |
+| Issue assigned / unassigned | private message to the assignee |
+| News added / commented | stream message |
+| Document added, file and document attachments | stream message |
+| Forum message posted | stream message |
+| Wiki page added / updated | stream message |
+
+Events turned off in **Administration → Settings → Email notifications** are not
+mirrored either. Message bodies are sent in full (notes, descriptions, wiki
+text); a message longer than Zulip's limit is truncated with a trailing `…`.

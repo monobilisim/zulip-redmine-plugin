@@ -2,8 +2,6 @@ module RedmineZulip
   module IssuePatch
     extend ActiveSupport::Concern
 
-    TWEET_SIZE = 140
-
     # Issue columns rendered in update notifications, in display order.
     # column => [human_attribute_name key, resolver(value)]
     CHANGE_FIELDS = {
@@ -144,16 +142,13 @@ module RedmineZulip
       end
 
       if previous_changes.include?("description")
-        message += "~~~ quote\n"
-        message += description_truncated
-        message += "\n~~~\n"
+        message += "\n* **#{Issue.human_attribute_name(:description, locale: locale)}**\n"
+        message += "~~~quote\n#{description}\n~~~\n"
       end
 
       if notes.present?
         message += "\n* **#{Issue.human_attribute_name(:notes, locale: locale)}**\n"
-        message += "~~~ quote\n"
-        message += notes
-        message += "\n~~~\n"
+        message += "~~~quote\n#{notes}\n~~~\n"
       end
 
       CHANGE_FIELDS.each do |column, (label, resolver)|
@@ -179,7 +174,7 @@ module RedmineZulip
         status: status.name,
         project: project.name,
         subject: subject_without_punctuation,
-        description: description_truncated,
+        description: description.to_s,
         status_label: Issue.human_attribute_name(:status, locale: locale)
       })
       # The assignment itself is already in the template above.
@@ -269,7 +264,7 @@ module RedmineZulip
         url: url,
         project: project.name,
         subject: subject_without_punctuation,
-        description: description_truncated,
+        description: description.to_s,
         assigned_to_label: Issue.human_attribute_name(:assigned_to, locale: locale),
         assigned_to: assigned_to || "-",
         status_label: Issue.human_attribute_name(:status, locale: locale),
@@ -407,17 +402,6 @@ module RedmineZulip
 
     def url
       "#{Setting[:protocol]}://#{Setting[:host_name]}/issues/#{id}"
-    end
-
-    def description_truncated
-      truncated = description.to_s
-      if truncated.include?("\n")
-        truncated = "#{truncated.split("\n")[0]}..."
-      end
-      if truncated.size > TWEET_SIZE
-        truncated = "#{truncated[0..(TWEET_SIZE - 1)]}..."
-      end
-      truncated
     end
   end
 end

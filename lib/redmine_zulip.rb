@@ -3,4 +3,5 @@ module RedmineZulip
 end
 Issue.send(:include, RedmineZulip::IssuePatch)
 Project.send(:include, RedmineZulip::ProjectPatch)
+Mailer.singleton_class.prepend(RedmineZulip::MailerPatch)
 ProjectsController.send(:helper, RedmineZulip::ProjectSettingsTabs)
